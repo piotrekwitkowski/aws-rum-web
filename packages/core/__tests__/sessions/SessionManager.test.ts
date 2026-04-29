@@ -9,7 +9,6 @@ import {
     removeCookie,
     storeCookie
 } from '@aws-rum/web-core/utils/cookies-utils';
-import * as uuid from 'uuid';
 import { navigationEvent } from '@aws-rum/web-core/test-utils/mock-data';
 import { Config } from '@aws-rum/web-core/orchestration/config';
 import * as configModule from '@aws-rum/web-core/orchestration/config';
@@ -113,7 +112,7 @@ describe('SessionManager tests', () => {
             ...{ allowCookies: true }
         };
 
-        const sessionId = uuid.v4();
+        const sessionId = crypto.randomUUID();
         storeCookie(
             SESSION_COOKIE_NAME,
             btoa(JSON.stringify({ sessionId, record: true })),
@@ -224,7 +223,7 @@ describe('SessionManager tests', () => {
 
     test('when sessionId cookie is corrupt then getSession returns a new sessionId', async () => {
         // Init
-        const sessionId = uuid.v4();
+        const sessionId = crypto.randomUUID();
         const config = {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true }
@@ -276,7 +275,7 @@ describe('SessionManager tests', () => {
             ...{ allowCookies: true }
         };
 
-        const sessionId = uuid.v4();
+        const sessionId = crypto.randomUUID();
         storeCookie(
             SESSION_COOKIE_NAME,
             btoa(JSON.stringify({ sessionId, record: true })),
@@ -315,7 +314,7 @@ describe('SessionManager tests', () => {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true, userIdRetentionDays: 90 }
         };
-        const userId = uuid.v4();
+        const userId = crypto.randomUUID();
         storeCookie(
             USER_COOKIE_NAME,
             userId,
@@ -360,7 +359,7 @@ describe('SessionManager tests', () => {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true, userIdRetentionDays: 90 }
         };
-        const userId = uuid.v4();
+        const userId = crypto.randomUUID();
         storeCookie(
             USER_COOKIE_NAME,
             userId,
@@ -435,7 +434,7 @@ describe('SessionManager tests', () => {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true }
         };
-        const sessionId = uuid.v4();
+        const sessionId = crypto.randomUUID();
         storeCookie(
             SESSION_COOKIE_NAME,
             btoa(
@@ -595,7 +594,7 @@ describe('SessionManager tests', () => {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true }
         };
-        const sessionId = uuid.v4();
+        const sessionId = crypto.randomUUID();
         storeCookie(
             SESSION_COOKIE_NAME,
             btoa(JSON.stringify({ sessionId, record: true, eventCount: 1 })),
@@ -749,7 +748,7 @@ describe('SessionManager tests', () => {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true, userIdRetentionDays: 0 }
         };
-        const userId = uuid.v4();
+        const userId = crypto.randomUUID();
         storeCookie(
             USER_COOKIE_NAME,
             userId,
