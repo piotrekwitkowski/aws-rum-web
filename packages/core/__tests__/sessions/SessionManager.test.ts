@@ -934,7 +934,7 @@ describe('SessionManager tests', () => {
             ...DEFAULT_CONFIG,
             ...{ allowCookies: true }
         };
-        const cookieSessionId = uuid.v4();
+        const cookieSessionId = crypto.randomUUID();
         storeCookie(
             SESSION_COOKIE_NAME,
             btoa(

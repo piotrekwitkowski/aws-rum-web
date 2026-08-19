@@ -3,9 +3,9 @@ declare let msCrypto:
     | { getRandomValues: (holder: Uint8Array) => Uint8Array };
 
 export const getRandomValues = (holder: Uint8Array): Uint8Array => {
-    if (crypto) {
+    if (typeof crypto !== 'undefined') {
         return crypto.getRandomValues(holder);
-    } else if (msCrypto) {
+    } else if (typeof msCrypto !== 'undefined') {
         return msCrypto.getRandomValues(holder);
     } else {
         throw new Error('No crypto library found.');
