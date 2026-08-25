@@ -308,6 +308,22 @@ describe('SessionManager tests', () => {
         expect(sessionManager.getUserId()).toEqual(userId);
     });
 
+    test('When userId does not exist in cookie, then the generated userId is written to the cookie', async () => {
+        // Init -- no user cookie exists, so initializeUser() generates one
+        const sessionManager = defaultSessionManager({
+            ...DEFAULT_CONFIG,
+            ...{ allowCookies: true, userIdRetentionDays: 90 }
+        });
+
+        // Run
+        const userId = sessionManager.getUserId();
+
+        // Assert -- the cookie carries the generated ID rather than an empty
+        // string, so the ID survives the next page load
+        expect(userId).not.toEqual('');
+        expect(getCookie(USER_COOKIE_NAME)).toEqual(userId);
+    });
+
     test('When userId exists in cookie, then it returns the same userId', async () => {
         // Init
         const config = {

@@ -35,25 +35,41 @@ describe('random utils', () => {
             setCrypto({ getRandomValues: getRandomValuesSpy });
 
             // Run
-            const values = getRandomValues(holder);
+            getRandomValues(holder);
 
             // Assert
             expect(getRandomValuesSpy).toHaveBeenCalledWith(holder);
-            expect(values).toEqual(new Uint8Array(16).fill(0x01));
+            expect(holder).toEqual(new Uint8Array(16).fill(0x01));
         });
 
         test('when crypto is undefined then it falls back to msCrypto', async () => {
             // Init
+            const holder = new Uint8Array(16);
             const getRandomValuesSpy = jest.fn(fillWith(0x02));
             removeCrypto();
             globals.msCrypto = { getRandomValues: getRandomValuesSpy };
 
             // Run
-            const values = getRandomValues(new Uint8Array(16));
+            getRandomValues(holder);
 
             // Assert
-            expect(getRandomValuesSpy).toHaveBeenCalled();
-            expect(values).toEqual(new Uint8Array(16).fill(0x02));
+            expect(getRandomValuesSpy).toHaveBeenCalledWith(holder);
+            expect(holder).toEqual(new Uint8Array(16).fill(0x02));
+        });
+
+        test('when crypto exists but getRandomValues is missing then it falls back to msCrypto', async () => {
+            // Init
+            const holder = new Uint8Array(16);
+            const getRandomValuesSpy = jest.fn(fillWith(0x03));
+            setCrypto({ randomUUID: jest.fn() });
+            globals.msCrypto = { getRandomValues: getRandomValuesSpy };
+
+            // Run
+            getRandomValues(holder);
+
+            // Assert
+            expect(getRandomValuesSpy).toHaveBeenCalledWith(holder);
+            expect(holder).toEqual(new Uint8Array(16).fill(0x03));
         });
 
         test('when no crypto library is available then it throws', async () => {
@@ -66,13 +82,43 @@ describe('random utils', () => {
             );
         });
 
-        test('when using the platform crypto then the holder is populated', async () => {
+        test('when crypto exists but getRandomValues and msCrypto are missing then it throws', async () => {
+            // Init
+            setCrypto({ randomUUID: jest.fn() });
+
+            // Run and Assert
+            expect(() => getRandomValues(new Uint8Array(16))).toThrow(
+                'No crypto library found.'
+            );
+        });
+
+        test('when the implementation returns undefined then the holder is still filled', async () => {
+            // Init -- IE11's msCrypto and most hand-rolled stubs fill in place
+            // and return undefined, so nothing may read the return value.
+            const holder = new Uint8Array(16);
+            setCrypto({
+                getRandomValues: jest.fn((h: Uint8Array) => {
+                    h.fill(0x04);
+                })
+            });
+
             // Run
-            const values = getRandomValues(new Uint8Array(16));
+            getRandomValues(holder);
 
             // Assert
-            expect(values).toHaveLength(16);
-            expect(values.some((byte) => byte !== 0)).toBe(true);
+            expect(holder).toEqual(new Uint8Array(16).fill(0x04));
+        });
+
+        test('when using the platform crypto then the holder is populated', async () => {
+            // Init
+            const holder = new Uint8Array(16);
+
+            // Run
+            getRandomValues(holder);
+
+            // Assert
+            expect(holder).toHaveLength(16);
+            expect(holder.some((byte) => byte !== 0)).toBe(true);
         });
     });
 

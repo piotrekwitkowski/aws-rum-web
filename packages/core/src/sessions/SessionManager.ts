@@ -347,7 +347,7 @@ export class SessionManager {
         } else if (this.useCookies()) {
             userId = this.getUserIdCookie();
             this.userId = userId ? userId : generateUUID();
-            this.createOrRenewUserCookie(userId, this.userExpiry);
+            this.createOrRenewUserCookie(this.userId, this.userExpiry);
         } else {
             this.userId = generateUUID();
         }
