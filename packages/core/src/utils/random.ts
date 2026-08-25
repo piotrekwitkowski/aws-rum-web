@@ -24,7 +24,10 @@ export const getRandomValues = (holder: Uint8Array): void => {
 };
 
 export const generateUUID = (): string => {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.randomUUID === 'function'
+    ) {
         return crypto.randomUUID();
     }
     const bytes = new Uint8Array(16);

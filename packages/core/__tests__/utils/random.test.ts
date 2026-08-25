@@ -139,6 +139,21 @@ describe('random utils', () => {
             expect(getRandomValuesSpy).not.toHaveBeenCalled();
         });
 
+        test('when crypto.randomUUID is not callable then the byte fallback is used', async () => {
+            // Init -- a non-callable randomUUID passes a truthiness check but
+            // throws a TypeError when invoked, so the guard must check the type
+            setCrypto({
+                randomUUID: 'not a function',
+                getRandomValues: jest.fn(fillWith(0xab))
+            });
+
+            // Run
+            const result = generateUUID();
+
+            // Assert
+            expect(result).toEqual('abababab-abab-4bab-abab-abababababab');
+        });
+
         test('when crypto.randomUUID is unavailable then a v4 UUID is generated from random bytes', async () => {
             // Init
             setCrypto({ getRandomValues: jest.fn(fillWith(0xab)) });
